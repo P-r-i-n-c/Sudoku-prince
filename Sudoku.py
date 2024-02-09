@@ -1,15 +1,3 @@
-"""
-Determine si un tablero de Sudoku de 9 x 9 es válido. 
-Solo las celdas llenas deben validarse de acuerdo con las siguientes reglas:
-
-:) Chequear que el tablero introducido sea un tablero 9x9 
-:) Cada fila debe contener los dígitos 1-9 sin repetición.
-:) Cada columna debe contener los dígitos 1-9 sin repetición.
-:) Cada uno de los nueve subcuadros de 3 x 3 de la cuadrícula debe contener 
-los dígitos 1-9 sin repetición. 
-
-#modularizar -> módulos 
-"""
 
 
 
@@ -47,7 +35,7 @@ class ValidateSudoku:
         for fila in lista_a_chequear:
             for elemento in fila:
                 if elemento != '.':
-                    assert fila.count(elemento) == 1, "El tablero ingresado no es válido"
+                    assert fila.count(elemento) == 1, "El tablero no es valido"
 
 
     def chequeo_columnas(self):
