@@ -8,24 +8,34 @@ app = Flask(__name__)
 @app.route('/sudoku', methods=['GET'])
 def mostrar_sudoku():
     if request.method == 'GET':
-        # Obtener la lista enviada en el cuerpo del GET
-        json_MyBoard = SudokuFuncs.json_MyBoard
-        
+        # Obtener la lista enviada en el cuerpo del GET        
         # Devolver el JSON como respuesta
-        return json_MyBoard
+        return SudokuFuncs.json_MyBoard
+
+# @app.route('/sudoku', methods=['PUT'])
+# def añadir_numero_sudoku():
+#     if all(SudokuFuncs.isValid(board, row, col, num) for board in SudokuFuncs.myBoard
+#         for row in SudokuFuncs.myBoard for col in SudokuFuncs.myBoard for num in SudokuFuncs.myBoard):
+#         return SudokuFuncs.json_MyBoard 
+    
+        
+#         # Devolver el tablero Sudoku actualizado
+#     return jsonify({"mensaje":"No se puede añadir, intenta con otro numero"}), 
 
 @app.route('/sudoku', methods=['PUT'])
 def añadir_numero_sudoku():
-    new_json_sudoku = request.json
-    listaSudoku = json.dumps(new_json_sudoku)
-    if (SudokuFuncs.isValid(board, row, col, num) for board in new_json_sudoku
-        for row in new_json_sudoku for col in new_json_sudoku for num in new_json_sudoku):
-        return listaSudoku 
+    # Obtener los datos del JSON enviado en la solicitud
+    json_data = request.get_json()
+    #pasa el json a una lista 
     
+    # Verificar si la posición es válida utilizando la función isValid()
+    if all(SudokuFuncs.isValid() for in json_data):        # La posición es válida, así que actualiza el tablero y devuelve el JSON actualizado
         
-        # Devolver el tablero Sudoku actualizado
-    return jsonify({"mensaje":"No se puede añadir, intenta con otro numero"}), 
+        return json_data
     
+    # Si la posición no es válida, devuelve un mensaje de error
+    return jsonify({"mensaje": "No se puede añadir, intenta con otro número"}), 400
+
     
 if __name__ == '__main__':
     app.run(debug=True)

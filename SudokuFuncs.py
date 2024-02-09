@@ -75,5 +75,3 @@ print the result
 json_MyBoard = json.dumps(myBoard)
 
 
-# for line in myBoard:
-#     print(line)
