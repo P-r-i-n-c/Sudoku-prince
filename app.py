@@ -1,15 +1,25 @@
+import json
 from flask import Flask, request, jsonify
 import Sudoku
 
 
 app = Flask(__name__)
 
+# Cargar el contenido del archivo ejemploTablero.json
+with open('ejemploTablero.json', 'r') as file:
+    ejemplo_tablero = json.load(file)
+
 @app.route('/sudoku', methods=['GET'])
 def mostrar_sudoku():
-    if request.method == 'GET':
-        # Obtener la lista enviada en el cuerpo del GET        
-        # Devolver el JSON como respuesta
-        return Sudoku.board
+    # Devolver el contenido del archivo como respuesta JSON
+    return jsonify(ejemplo_tablero)
+
+# @app.route('/sudoku', methods=['GET'])
+# def mostrar_sudoku():
+#     if request.method == 'GET':
+#         # Obtener la lista enviada en el cuerpo del GET        
+#         # Devolver el JSON como respuesta
+#         return Sudoku.board
 
 
 @app.route('/sudoku', methods=['POST'])
