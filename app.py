@@ -1,7 +1,7 @@
 import json
 from flask import Flask, request, jsonify
-
-
+from Sudoku import convertir_tablero 
+from Sudoku import ValidateSudoku  
 app = Flask(__name__)
 
 # Cargar el contenido del archivo ejemploTablero.json
@@ -19,45 +19,45 @@ def mostrar_sudoku():
 #         # Obtener la lista enviada en el cuerpo del GET        
 #         # Devolver el JSON como respuesta
 #         return Sudoku.board
+@app.route('/sudoku', methods=['GET'])
+def lista_tablero():
+    data = request.get_json()
+    tablero_convertido = convertir_tablero(data)
+    return tablero_convertido
 
 
-
-@app.route('/sudoku', methods=['POST'])
-def recibir_tablero():
-    data = request.get_json()  # Obtener los datos del cuerpo de la solicitud POST
-    posicionx = data["posicionx"]
-    posiciony = data["posiciony"]
-    numero = data["numero"]
-    tablero = data["tablero"]
-
-    # Calcular la posición total
-    posicion =  posicionx * posiciony
+@app.route('/sudokucheckfilascolumnas', methods=['POST'])
+def sudokucheckfilascolumnas():
+    data = request.get_json()
+    tablero_convertido = convertir_tablero(data)
+    tablero_convertido = json.loads(tablero_convertido)
     
-    # Verificar que la posición esté en el rango correcto (0-80)
-    if 1 <= posicion <= 27:
-        # Contador para llevar la cuenta de las celdas exploradas
-        celdas_exploradas = 0
-        # Iterar sobre las filas del tablero
-        for fila in tablero:
-            # Iterar sobre las columnas de la fila
-            for columna in fila["columnas"]:
-                # Iterar sobre las celdas de la columna
-                for col in columna:
-                    # Si la celda es cero y hemos llegado a la posición indicada
-                    if celdas_exploradas == posicion:
-                        # Asignar el número a la celda
-                        columna = numero
-                        # Crear un nuevo diccionario solo con el tablero actualizado
-                        tablero_actualizado = {"tablero": tablero}
-                        return jsonify(tablero_actualizado)
-                    # Incrementar el contador de celdas exploradas
-                    celdas_exploradas += 1
-    else:
-        return "Error: La posición está fuera de rango (0-80)", 400
-    
-    # En caso de que no se haya encontrado una celda válida para colocar el número
-    return "Error: No se pudo colocar el número en la posición indicada", 400
+    sudoku = ValidateSudoku(tablero_convertido)
+    try:
+        sudoku.chequeo_general()
+        sudoku.chequeo_filas()
+        sudoku.chequeo_columnas()
+    except AssertionError as e:
+        return jsonify({"mensaje": str(e), "tablero": tablero_convertido}), 400
 
+
+    return jsonify({"mensaje": "El tablero de Sudoku ingresado es válido"}), 200
+
+@app.route('/sudokucheckcuadrante', methods=['POST'])
+def sudokucheckcuadrante():
+    data = request.get_json()
+    tablero_convertido = convertir_tablero(data)
+    tablero_convertido = json.loads(tablero_convertido)
+    
+    sudoku = ValidateSudoku(tablero_convertido)
+    try:
+        sudoku.chequeo_general()
+        sudoku.chequeo_subcuadros()
+    except AssertionError as e:
+        return jsonify({"mensaje": str(e), "tablero": tablero_convertido}), 400
+
+
+    return jsonify({"mensaje": "Dato ubicado correctamente"}), 200
 
 if __name__ == '__main__':
     app.run(debug=True)

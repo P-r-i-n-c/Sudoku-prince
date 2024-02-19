@@ -1,20 +1,32 @@
 import json
 
+board = []
 
-board = board = [
-["5","3",".",".","7",".",".",".","."]
-,["6",".",".","1","9","5",".",".","."]
-,[".","9","8",".",".",".",".","6","."]
-,["8",".",".",".","6",".",".",".","3"]
-,["4",".",".","8",".","3",".",".","1"]
-,["7",".",".",".","2",".",".",".","6"]
-,[".","6",".",".",".",".","2","8","."]
-,[".",".",".","4","1","9",".",".","5"]
-,[".",".",".",".","8",".",".","7","9"]
-]
+def convertir_tablero(response):
+    # Extraer el tablero actualizado
+    tablero_actualizado = response["tablero"]
+    # Inicializar la lista para el tablero
+
+    # Recorrer cada tablero en la lista de tableros
+    for fila in tablero_actualizado:
+        # Recorrer cada fila del tablero
+        for celdas in fila["columnas"]:
+            # Convertir la lista de números en la fila a una lista de strings
+            valores_celda = [str(numero) for lista in celdas for numero in lista]
+            # Extender la lista del tablero con los valores de las celdas
+            board.extend(valores_celda)
+
+    # Dividir la lista en sublistas de 9 elementos cada una
+    board_divided = [board[i:i+9] for i in range(0, len(board), 9)]
+
+    # Formatear la lista board para guardarla en una variable
+    board_formatted = ['\n[' + ','.join(['"' + celda + '"' for celda in fila]) + ']' for fila in board_divided]
+    board_output = '[' + ','.join(board_formatted) + ']'
+
+    return board_output
 
 class ValidateSudoku:
-    def __init__(self,tablero) -> None:
+    def __init__(self, tablero) -> None:
         self.tablero = tablero
         self.lista_invertida = list()
 
@@ -28,13 +40,13 @@ class ValidateSudoku:
             assert len(fila) == 9, "El tablero ingresado no respeta el formato 9x9"
 
     
-    def chequeo_filas(self,lista_a_chequear='tablero_general'):
+    def chequeo_filas(self, lista_a_chequear='tablero_general'):
         if lista_a_chequear == 'tablero_general':
             lista_a_chequear = self.tablero
 
         for fila in lista_a_chequear:
             for elemento in fila:
-                if elemento != '.':
+                if elemento != '0':
                     assert fila.count(elemento) == 1, "El tablero no es valido"
 
 
@@ -57,7 +69,7 @@ class ValidateSudoku:
         self.chequeo_3_subcuadros(3,6)
         self.chequeo_3_subcuadros(6,9)
 
-    def chequeo_3_subcuadros(self,rango1,rango2):
+    def chequeo_3_subcuadros(self, rango1, rango2):
         self.lista_invertida.clear()
         for row_index in range(0,9):
             if row_index == 3 or row_index == 6:
@@ -67,15 +79,3 @@ class ValidateSudoku:
                 if len(self.lista_invertida) == 9:
                     self.chequeo_filas([self.lista_invertida])
                 #chequeo filas
-        
-        
-
-
-#instanciar objeto
-if __name__ == "__main__":
-    sudoku = ValidateSudoku(board)
-    sudoku.chequeo_general()
-    sudoku.chequeo_filas()
-    sudoku.chequeo_columnas()
-    sudoku.chequeo_subcuadros()
-    print('El tablero de Sudoku ingresado es válido')
